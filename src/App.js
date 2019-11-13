@@ -1,26 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useRef } from 'react';
+import FormRow from './components/FormRow'
+import { NAME, ADDRESS, INCOME, REQUEST } from './constants.js';
 import './App.css';
 
 function App() {
+  const inputRefs = {
+    [NAME]: useRef(null),
+    [ADDRESS]: useRef(null),
+    [INCOME]: useRef(null),
+    [REQUEST]: useRef(null),
+  }
+
+  const handleSubmit = e => {
+    e.preventDefault()
+    console.log(' e is ', e)
+    console.log(' inputRefs is ', inputRefs)
+  }
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="body">
+      <form
+        onSubmit={handleSubmit}
+      >
+        {
+          Object.entries(inputRefs).map(([key, ref]) => (
+            <FormRow key={key} inputKey={key} ref={ref} />
+          ))
+        }
+        <button type="submit" >
+          Submit
+        </button>
+      </form>
     </div>
   );
-}
+};
 
 export default App;
