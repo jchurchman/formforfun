@@ -1,5 +1,6 @@
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
+import AddressInput from './AddressInput.jsx'
 import { NAME, ADDRESS, INCOME, REQUEST } from '../constants.js';
 
 const inputConfig = {
@@ -33,6 +34,7 @@ const FormRow = forwardRef((props, ref) => {
     inputKey
   } = props;
   
+
   const {
     label,
     type,
@@ -44,14 +46,26 @@ const FormRow = forwardRef((props, ref) => {
 			<label htmlFor={inputKey}>
         {label}
       </label>
-      <input
-        ref={ref}
-        name={inputKey}
-        required
-        type={type}
-        id={inputKey}
-        {...otherProps}
-      />
+      {
+        inputKey === ADDRESS
+          ? (
+            <AddressInput
+              ref={ref}
+              inputKey={inputKey}
+              {...inputConfig[inputKey]}
+            />
+          )
+          : (
+            <input
+              ref={ref}
+              name={inputKey}
+              required
+              type={type}
+              id={inputKey}
+              {...otherProps}
+            />
+          )
+      }
 		</span>
 	);
 });
