@@ -24,18 +24,19 @@ export default function (argObj) {
   const income = argObj[INCOME];
   const request = argObj[REQUEST];
 
-  const submissions = localStorage.get('submissions') || []; // eslint-disable-line
+  const record = localStorage.getItem('submissions'); // eslint-disable-line
+  const submissions = record ? JSON.parse(record) : [];
   const evaluation = evaluateLoan({ income, request });
 
-  localStorage.set( // eslint-disable-line
+  localStorage.setItem( // eslint-disable-line
     'submissions',
-    [
+    JSON.stringify([
       ...submissions,
       {
         ...argObj,
         evaluation,
       },
-    ],
+    ]),
   );
   return evaluation;
 }

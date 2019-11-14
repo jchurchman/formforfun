@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import AddressInput from './AddressInput.jsx'
 import { NAME, ADDRESS, INCOME, REQUEST } from '../constants.js';
@@ -18,6 +18,7 @@ const inputConfig = {
     type: 'number',
     otherProps: {
       min: 0,
+      step: 500,
     }
   },
   [REQUEST]: {
@@ -25,13 +26,17 @@ const inputConfig = {
     type: 'number',
     otherProps: {
       min: 0,
+      step: 500,
     }
   },
 }
 
-const FormRow = forwardRef((props, ref) => {
+const FormRow = (props) => {
 	const {
-    inputKey
+    inputKey,
+    value,
+    onChange,
+    setInvalid
   } = props;
   
 
@@ -50,14 +55,17 @@ const FormRow = forwardRef((props, ref) => {
         inputKey === ADDRESS
           ? (
             <AddressInput
-              ref={ref}
+              onChange={onChange}
+              value={value}
               inputKey={inputKey}
+              setInvalid={setInvalid}
               {...inputConfig[inputKey]}
             />
           )
           : (
             <input
-              ref={ref}
+              onChange={onChange}
+              value={value}
               name={inputKey}
               required
               type={type}
@@ -68,10 +76,13 @@ const FormRow = forwardRef((props, ref) => {
       }
 		</span>
 	);
-});
+};
 
 FormRow.propTypes = {
   inputKey: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  onChange: PropTypes.func,
+  setInvalid: PropTypes.func,
 };
 
 export default FormRow

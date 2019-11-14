@@ -1,14 +1,18 @@
 
 .body {
   display: grid;
-  grid-template-rows: 1fr 550px 1fr;
+  grid-template-rows: 20vh 550px 1fr;
   grid-template-columns: 1fr 550px 1fr;
   font-size: 18px;
-  line-height: 1.5;
+  line-height: 1.8;
 
 }
 
 .body > form {
+  grid-column-start: 2;
+  grid-row-start: 2;
+}
+.body > .response {
   grid-column-start: 2;
   grid-row-start: 2;
 }
@@ -18,6 +22,7 @@
   justify-content: space-between;
   align-items: center;
   margin: 18px;
+  position: relative;
 }
 
 .submit-button {
@@ -42,4 +47,17 @@ button {
 }
 #address {
   width: 300px;
+}
+
+.error {
+  border: 1px solid red;
+  box-shadow: 2px 2px lightcoral;
+}
+
+.error ~ div {
+  position: absolute;
+  bottom: -18px;
+  right: 0;
+  font-size: 12px;
+  color: red;
 }

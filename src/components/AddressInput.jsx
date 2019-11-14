@@ -1,39 +1,43 @@
-import React, { forwardRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import Script from 'react-load-script';
 
-const AddressInput = forwardRef((props, ref) => {
+const approvedStates = new Set(['OR', 'CA', 'FL'])
+
+const AddressInput = (props) => {
   const {
     inputKey,
     type,
+    value,
+    onChange,
+    setInvalid,
   } = props
-  const [ value, setValue ] = useState('')
   const [ hasBlurred, setBlur ] = useState(false)
-  const [ suggestionSelected, setSuggestionSelected ] = useState(false)
+  const [ locationError, setLocationError ] = useState(false)
+  let ref = useRef()
 
-  const handleChange = e => {
-    setValue(e.target.value)
-    setSuggestionSelected(false)
-  }
   const handlePlaceSelect = () => {
-
-    // Extract City From Address Object
     const addressObject = ref.getPlace();
     const address = addressObject.address_components;
 
     // Check if address is valid
     if (address) {
-      console.log({...addressObject})
+      const stateObj = address.find(({ types }) => {
+        return types.includes("administrative_area_level_1")
+        && types.includes("political")
+      })
+
       // Set State
-      setSuggestionSelected(true)
-      setValue(
-        addressObject.formatted_address
-      );
+      const locationError = !approvedStates.has(stateObj.short_name)
+      setLocationError(locationError)
+      setInvalid(locationError)
+
+      onChange({ target: { value: addressObject.formatted_address}});
     }
   }
   const handleScriptLoad = () => { 
     // Declare Options For Autocomplete 
-    const options = { types: ['address'], componentRestrictions: 'us' }; 
+    const options = { types: ['address'], componentRestrictions: { country: 'us' } }; 
     
     // Initialize Google Autocomplete 
     /*global google*/
@@ -55,6 +59,10 @@ const AddressInput = forwardRef((props, ref) => {
     ); 
   };
 
+  const errorMessage = hasBlurred
+    && locationError
+    && 'Please choose a location in CA, OR, or FL'
+
   return (
     <>
       <Script
@@ -62,18 +70,25 @@ const AddressInput = forwardRef((props, ref) => {
         onLoad={handleScriptLoad}
       />
       <input
-        ref={ref}
+        className={errorMessage ? 'error' : ''}
         name={inputKey}
         required
         type={type}
         id={inputKey}
         value={value}
         onBlur={() => setBlur(true)}
-        onChange={handleChange}
+        onChange={onChange}
       />
+      {
+        errorMessage && (
+          <div>
+            {errorMessage}
+          </div>
+        )
+      }
     </>
   )
-});
+};
 
 AddressInput.propTypes = {
   inputKey: PropTypes.string,
